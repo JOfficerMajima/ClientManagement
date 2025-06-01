@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+ pgsql:
+    image: postgres:17.5-alpine
+    container_name: clientmanagement.pgsql
+    restart: always
+    ports:
+        - "5432:5432"
+    environment:
+        - POSTGRES_PASSWORD=123qwe
+        - POSTGRES_DB=clientmanagement
+        - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+        - ./db:/var/lib/postgresql/data/pgdata
