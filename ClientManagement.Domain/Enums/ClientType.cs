@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientManagement.Domain.Common
+namespace ClientManagement.Domain.Enums
 {
     public enum ClientType
     {

@@ -2,7 +2,7 @@ version: '3'
 
 services:
  pgsql:
-    image: postgres:17.5-alpine
+    image: postgres:alpine
     container_name: clientmanagement.pgsql
     restart: always
     ports:

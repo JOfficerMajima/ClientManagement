@@ -1,22 +1,20 @@
 ﻿using ClientManagement.Domain.Common;
+using ClientManagement.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace ClientManagement.Domain.Entities
 {
-    public class Client : Entity
+    public class Client : AuditedEntity
     {
         [Required]
         public string INN { get; set; }
 
         [Required]
-        public string ClientName { get; set; }
+        public string Name { get; set; }
 
         [Required]
         public ClientType Type { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime LastUpdatedAt { get; set;} = DateTime.Now;
-
-        public List<Founder> Founders { get; set; }
+        public ICollection<FounderClient> FounderClients { get; set; }
     }
 }

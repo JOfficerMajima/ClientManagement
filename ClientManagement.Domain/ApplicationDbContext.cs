@@ -14,23 +14,26 @@ namespace ClientManagement.Domain
 
         public DbSet<Founder> Founders { get; set; }
 
+        public DbSet<FounderClient> FounderClients { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Client>().HasIndex(c => c.INN).IsUnique();
             modelBuilder.Entity<Founder>().HasIndex(f => f.INN).IsUnique();
-
-            modelBuilder.Entity<Client>()
-                .HasMany(c => c.Founders)
-                .WithOne(f => f.Client)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<FounderClient>().HasKey(f => new { f.ClientId, f.FounderId });
+            modelBuilder.Entity<FounderClient>().HasOne(f => f.Client).WithMany(c => c.FounderClients).HasForeignKey(f => f.ClientId);
+            modelBuilder.Entity<FounderClient>().HasOne(f => f.Founder).WithMany(c => c.FounderClients).HasForeignKey(f => f.FounderId);
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken ct = default)
         {
             foreach (var entry in ChangeTracker.Entries<Entity>())
             {
-                if (entry.State == EntityState.Added) entry.Entity.CreatedAt = DateTime.UtcNow;
-                if (entry.State != EntityState.Unchanged) entry.Entity.UpdatedAt = DateTime.UtcNow;
+                if (entry.Entity is AuditedEntity auditedEntity)
+                {
+                    if (entry.State == EntityState.Added) auditedEntity.CreatedAt = DateTime.UtcNow;
+                    if (entry.State != EntityState.Unchanged) auditedEntity.UpdatedAt = DateTime.UtcNow;
+                }
             }
             return base.SaveChangesAsync(ct);
         }

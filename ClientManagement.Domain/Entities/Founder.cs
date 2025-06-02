@@ -1,4 +1,5 @@
 ﻿using ClientManagement.Domain.Common;
+using ClientManagement.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,21 +9,14 @@ using System.Threading.Tasks;
 
 namespace ClientManagement.Domain.Entities
 {
-    public class Founder : Entity
+    public class Founder : AuditedEntity
     {
         [Required]
         public string INN { get; set; }
 
         [Required]
-        public string ClientName { get; set; }
+        public string FullName { get; set; }
 
-        [Required]
-        public ClientType Type { get; set; }
-
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime LastUpdatedAt { get; set; } = DateTime.Now;
-
-        public int ClientId { get; set; }
-        public Client Client { get; set; }
+        public ICollection<FounderClient> FounderClients { get; set; }
     }
 }
