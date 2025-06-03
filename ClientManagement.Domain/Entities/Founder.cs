@@ -12,7 +12,7 @@ namespace ClientManagement.Domain.Entities
     public class Founder : AuditedEntity
     {
         [Required]
-        public string INN { get; set; }
+        public int INN { get; set; }
 
         [Required]
         public string FullName { get; set; }

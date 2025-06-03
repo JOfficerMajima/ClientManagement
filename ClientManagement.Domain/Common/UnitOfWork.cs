@@ -1,8 +1,10 @@
 ﻿using ClientManagement.Application.Interfaces;
 using ClientManagement.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,39 +21,35 @@ namespace ClientManagement.Application.Common
             _context = context;
         }
 
-        public async Task BeginTransactionAsync()
+        public async Task BeginTransaction()
         {
             if (_currentTransaction != null)
             {
                 return;
             }
-
             _currentTransaction = await _context.Database.BeginTransactionAsync();
         }
 
-        public async Task CommitAsync()
+        public async Task CommitTransaction()
         {
+            if (_currentTransaction == null)
+            {
+                throw new InvalidOperationException("Transaction is null");
+            }
+
             try
             {
-                await _context.SaveChangesAsync();
-
-                if (_currentTransaction != null)
-                {
-                    await _currentTransaction.CommitAsync();
-                }
+                await SaveChanges();
+                await _currentTransaction.CommitAsync();
             }
             catch
             {
-                await RollbackAsync();
+                await RollbackTransaction();
                 throw;
             }
             finally
             {
-                if ( _currentTransaction != null)
-                {
-                    await _currentTransaction.DisposeAsync();
-                    _currentTransaction = null;
-                }
+                Dispose();
             }
         }
 
@@ -62,21 +60,21 @@ namespace ClientManagement.Application.Common
                 _currentTransaction.Dispose();
                 _currentTransaction = null;
             }
-            _context.Dispose();
         }
 
-        public async Task RollbackAsync()
+        public async Task RollbackTransaction()
         {
-            if (_currentTransaction == null) return;
-
             try
             {
+                if (_currentTransaction == null)
+                {
+                    return;
+                }
                 await _currentTransaction.RollbackAsync();
             }
             finally
             {
-                await _currentTransaction.DisposeAsync();
-                _currentTransaction = null;
+                Dispose();
             }
         }
 

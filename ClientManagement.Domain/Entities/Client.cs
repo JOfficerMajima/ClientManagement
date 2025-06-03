@@ -7,7 +7,7 @@ namespace ClientManagement.Domain.Entities
     public class Client : AuditedEntity
     {
         [Required]
-        public string INN { get; set; }
+        public int INN { get; set; }
 
         [Required]
         public string Name { get; set; }

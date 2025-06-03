@@ -8,9 +8,9 @@ namespace ClientManagement.Application.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-        Task BeginTransactionAsync();
-        Task CommitAsync();
-        Task RollbackAsync();
+        Task BeginTransaction();
+        Task CommitTransaction();
+        Task RollbackTransaction();
         Task SaveChanges();
     }
 }

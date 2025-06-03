@@ -1,4 +1,7 @@
-﻿using ClientManagement.Application.Interfaces;
+﻿using AutoMapper;
+using ClientManagement.Application.Clients;
+using ClientManagement.Application.Clients.Dtos;
+using ClientManagement.Application.Interfaces;
 using ClientManagement.Application.Repositories;
 using ClientManagement.Domain;
 using ClientManagement.Domain.Entities;
@@ -9,74 +12,77 @@ namespace ClientManagement.Api.Controllers
 {
     public class ClientController : BaseApiController
     {
-        private readonly IClientRepository _clientRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IClientService _clientService;
+        private readonly IMapper _mapper;
 
         public ClientController(
             ApplicationDbContext context,
-            IClientRepository clientRepository,
-            IUnitOfWork unitOfWork) : base(context)
+            IClientService clientService,
+            IMapper mapper) : base(context)
         {
-            _clientRepository = clientRepository;
-            _unitOfWork = unitOfWork;
+            _clientService = clientService;
+            _mapper = mapper;
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> AddAsync(Client client)
+        public async Task<IActionResult> Add([FromBody] ClientDto dto)
         {
-            try
-            {
-                await _unitOfWork.BeginTransactionAsync();
-
-                await _clientRepository.AddAsync(client);
-
-                await _unitOfWork.CommitAsync();
-
-                return Ok(client);
-            }
-            catch (Exception ex)
-            {
-                await _unitOfWork.RollbackAsync();
-                return BadRequest(ex.Message);
-            }
+            var client = _mapper.Map<Client>(dto);
+            await _clientService.AddAsync(client);
+            return Ok();
         }
 
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(Client), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ClientDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var client = await _clientRepository.GetByIdAsync(id);
+            var client = await _clientService.GetByIdAsync(id);
+            if (client == null)
+                return NotFound();
 
-                return Ok(client);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(_mapper.Map<ClientDto>(client));
+        }
+
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(ClientDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetByINN(int inn)
+        {
+            var client = await _clientService.GetByINNAsync(inn);
+            if (client == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<ClientDto>(client));
+        }
+
+
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(IEnumerable<ClientDto>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetAll()
+        {
+            var clients = await _clientService.GetAllAsync();
+            return Ok(clients);
+        }
+
+        [HttpPut("[action]")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<ActionResult> Update([FromBody] ClientDto dto)
+        {
+            var client = _mapper.Map<Client>(dto);
+            await _clientService.UpdateAsync(client);
+            return NoContent();
         }
 
         [HttpDelete("[action]")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Remove(int id)
         {
-            try
-            {
-                await _unitOfWork.BeginTransactionAsync();
-
-                await _clientRepository.DeleteAsync(id);
-
-                await _unitOfWork.CommitAsync();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                await _unitOfWork.RollbackAsync();
-                return BadRequest(ex.Message);
-            }
+            await _clientService.DeleteAsync(id);
+            return NoContent();
         }
 
-
+        
     }
 }

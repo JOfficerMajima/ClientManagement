@@ -18,11 +18,10 @@ namespace ClientManagement.Domain.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    INN = table.Column<string>(type: "text", nullable: false),
-                    ClientName = table.Column<string>(type: "text", nullable: false),
+                    INN = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastUpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
@@ -36,21 +35,36 @@ namespace ClientManagement.Domain.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    INN = table.Column<string>(type: "text", nullable: false),
-                    ClientName = table.Column<string>(type: "text", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
+                    INN = table.Column<int>(type: "integer", nullable: false),
+                    FullName = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    LastUpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ClientId = table.Column<int>(type: "integer", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Founders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FounderClients",
+                columns: table => new
+                {
+                    ClientId = table.Column<int>(type: "integer", nullable: false),
+                    FounderId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FounderClients", x => new { x.ClientId, x.FounderId });
                     table.ForeignKey(
-                        name: "FK_Founders_Clients_ClientId",
+                        name: "FK_FounderClients_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FounderClients_Founders_FounderId",
+                        column: x => x.FounderId,
+                        principalTable: "Founders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -62,9 +76,9 @@ namespace ClientManagement.Domain.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Founders_ClientId",
-                table: "Founders",
-                column: "ClientId");
+                name: "IX_FounderClients_FounderId",
+                table: "FounderClients",
+                column: "FounderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Founders_INN",
@@ -77,10 +91,13 @@ namespace ClientManagement.Domain.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Founders");
+                name: "FounderClients");
 
             migrationBuilder.DropTable(
                 name: "Clients");
+
+            migrationBuilder.DropTable(
+                name: "Founders");
         }
     }
 }
