@@ -7,6 +7,7 @@ namespace ClientManagement.Application.Interfaces
         Task AddAsync (Client client);
         Task<IEnumerable<Client>> GetAllAsync();
         Task<Client> GetByIdAsync(int id);
+        Task<Client> GetByIdWithFoundersAsync(int id);
         Task<Client> GetByINNAsync (int inn);
         Task UpdateAsync (Client client);
         Task DeleteAsync (int id);

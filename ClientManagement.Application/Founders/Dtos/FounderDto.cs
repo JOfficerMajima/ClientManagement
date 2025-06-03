@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ClientManagement.Application.Founders.Dtos
 {
-    public abstract class FounderDto : AuditedEntityDto
+    public class FounderDto : AuditedEntityDto
     {
         [Required]
         public string INN { get; set; }

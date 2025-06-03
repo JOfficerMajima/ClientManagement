@@ -1,6 +1,5 @@
 ﻿using ClientManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Runtime.ExceptionServices;
 
 namespace ClientManagement.Api.Middleware
 {

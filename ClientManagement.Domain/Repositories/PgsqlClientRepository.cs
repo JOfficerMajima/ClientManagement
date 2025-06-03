@@ -2,11 +2,6 @@
 using ClientManagement.Domain;
 using ClientManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClientManagement.Application.Repositories
 {
@@ -54,5 +49,12 @@ namespace ClientManagement.Application.Repositories
             }
         }
 
+        public async Task<Client> GetByIdWithFoundersAsync(int id)
+        {
+             return await _context.Clients.
+                Include(c => c.FounderClients).
+                ThenInclude(fc => fc.Founder).
+                FirstOrDefaultAsync(c => c.Id == id);
+        }
     }
 }

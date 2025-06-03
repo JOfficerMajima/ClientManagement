@@ -1,11 +1,6 @@
 ﻿using AutoMapper;
 using ClientManagement.Application.Clients.Dtos;
 using ClientManagement.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClientManagement.Application.Mapping
 {
@@ -15,6 +10,10 @@ namespace ClientManagement.Application.Mapping
         {
             CreateMap<Client, ClientDto>();
             CreateMap<ClientDto, Client>();
+            CreateMap<UpdateClientDto, Client>();
+            CreateMap<Client, UpdateClientDto>();
+            CreateMap<Client, ClientWithFoundersDto>().
+                ForMember(dest => dest.Founders, opt => opt.MapFrom(src => src.FounderClients.Select(fc => fc.Founder)));
         }
     }
 }

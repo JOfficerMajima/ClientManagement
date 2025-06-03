@@ -15,6 +15,6 @@ namespace ClientManagement.Domain.Entities
         [Required]
         public ClientType Type { get; set; }
 
-        public ICollection<FounderClient> FounderClients { get; set; }
+        public ICollection<FounderClient> FounderClients { get; set; } = new List<FounderClient>();
     }
 }

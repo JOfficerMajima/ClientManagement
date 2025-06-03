@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using ClientManagement.Application.Clients;
 using ClientManagement.Application.Clients.Dtos;
-using ClientManagement.Application.Interfaces;
-using ClientManagement.Application.Repositories;
 using ClientManagement.Domain;
 using ClientManagement.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -67,7 +65,7 @@ namespace ClientManagement.Api.Controllers
 
         [HttpPut("[action]")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult> Update([FromBody] ClientDto dto)
+        public async Task<ActionResult> Update([FromBody] UpdateClientDto dto)
         {
             var client = _mapper.Map<Client>(dto);
             await _clientService.UpdateAsync(client);
@@ -83,6 +81,11 @@ namespace ClientManagement.Api.Controllers
             return NoContent();
         }
 
-        
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetClientWithFounders(int id)
+        {
+            var result = await _clientService.GetClientWithFoundersAsync(id);
+            return Ok(result);
+        }
     }
 }

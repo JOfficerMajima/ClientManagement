@@ -3,14 +3,7 @@ using ClientManagement.Application.Clients.Dtos;
 using ClientManagement.Application.Exceptions;
 using ClientManagement.Application.Interfaces;
 using ClientManagement.Domain.Entities;
-using ClientManagement.Domain.Enums;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClientManagement.Application.Clients
 {
@@ -23,7 +16,7 @@ namespace ClientManagement.Application.Clients
         public ClientService(
             IClientRepository clientRepository,
             IMapper mapper,
-            ILogger<ClientService> logger) 
+            ILogger<ClientService> logger)
         {
             _clientRepository = clientRepository;
             _mapper = mapper;
@@ -32,42 +25,31 @@ namespace ClientManagement.Application.Clients
 
         public async Task AddAsync(Client client)
         {
-            _logger.LogInformation($"Добавление клиента с INN: {client.INN}");
+            _logger.LogInformation($"Добавление клиента. INN: {client.INN}, ID: {client.Id}");
 
-            try
+            var clientCheck = await _clientRepository.GetByINNAsync(client.INN);
+
+            if (clientCheck != null)
             {
-                var clientCheck = await _clientRepository.GetByINNAsync(client.INN);
-
-                if (clientCheck != null)
-                {
-                    throw new UserFriendlyException($"Клиент с INN: {client.INN} уже существует", "CLIENT_EXISTS")
-                        .WithData("ID", client.Id);
-                }
-
-                await _clientRepository.AddAsync(client);
-                _logger.LogInformation($"Клиент с INN: {client.INN} успешно добавлен");
+                throw new UserFriendlyException($"Клиент с INN: {client.INN} уже существует", "CLIENT_EXISTS")
+                    .WithData("ID", client.Id);
             }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, $"Ошибка при сохранении клиента с INN: {client.INN}");
-                throw new UserFriendlyException("Ошибка сохранения клиента", "DB_SAVE_ERROR", ex);
-            }
-        }
 
-        public Task DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
+            await _clientRepository.AddAsync(client);
+            _logger.LogInformation($"Клиент с INN: {client.INN} успешно добавлен");
         }
 
         public async Task<IEnumerable<ClientDto>> GetAllAsync()
         {
+            _logger.LogDebug("Запрос на получение всех клиентов");
+
             var clients = await _clientRepository.GetAllAsync();
             return _mapper.Map<IEnumerable<ClientDto>>(clients);
         }
 
         public async Task<Client> GetByIdAsync(int id)
         {
-            _logger.LogDebug($"Получение клиента {id}");
+            _logger.LogDebug($"Получение клиента с ID: {id}");
 
             var client = await _clientRepository.GetByIdAsync(id);
             if (client == null)
@@ -75,7 +57,6 @@ namespace ClientManagement.Application.Clients
                 throw new UserFriendlyException($"Клиент с ID {id} не найден", "CLIENT_NOT_FOUND")
                     .WithData("ClientId", id);
             }
-
             return client;
         }
 
@@ -86,16 +67,28 @@ namespace ClientManagement.Application.Clients
             var client = await _clientRepository.GetByINNAsync(inn);
             if (client == null)
             {
-                throw new UserFriendlyException($"Клиент с ID {inn} не найден", "CLIENT_NOT_FOUND")
-                    .WithData("ClientId", inn);
+                throw new UserFriendlyException($"Клиент с INN {inn} не найден", "CLIENT_NOT_FOUND")
+                    .WithData("ClientINN", inn);
             }
-
             return client;
         }
 
-        public Task UpdateAsync(Client client)
+        public async Task UpdateAsync(Client client)
         {
-            throw new NotImplementedException();
+            _logger.LogDebug($"Обновление клиента с ID: {client.Id}");
+            _clientRepository.UpdateAsync(client);
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            _logger.LogDebug($"Удаление клиента с ID: {id}");
+            await _clientRepository.DeleteAsync(id);
+        }
+
+        public async Task<ClientWithFoundersDto> GetClientWithFoundersAsync(int id)
+        {
+            var client = await _clientRepository.GetByIdWithFoundersAsync(id);
+            return _mapper.Map<ClientWithFoundersDto>(client);
         }
     }
 }

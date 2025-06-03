@@ -20,6 +20,7 @@ namespace ClientManagement.Domain
         {
             modelBuilder.Entity<Client>().HasIndex(c => c.INN).IsUnique();
             modelBuilder.Entity<Founder>().HasIndex(f => f.INN).IsUnique();
+
             modelBuilder.Entity<FounderClient>().HasKey(f => new { f.ClientId, f.FounderId });
             modelBuilder.Entity<FounderClient>().HasOne(f => f.Client).WithMany(c => c.FounderClients).HasForeignKey(f => f.ClientId);
             modelBuilder.Entity<FounderClient>().HasOne(f => f.Founder).WithMany(c => c.FounderClients).HasForeignKey(f => f.FounderId);

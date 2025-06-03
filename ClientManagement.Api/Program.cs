@@ -1,17 +1,21 @@
 using ClientManagement.Api.Middleware;
 using ClientManagement.Application.Clients;
 using ClientManagement.Application.Common;
+using ClientManagement.Application.Founders;
 using ClientManagement.Application.Interfaces;
 using ClientManagement.Application.Mapping;
 using ClientManagement.Application.Repositories;
 using ClientManagement.Domain;
+using ClientManagement.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IClientRepository, PgsqlClientRepository>();
+builder.Services.AddScoped<IFounderService, FounderService>();
+builder.Services.AddScoped<IFounderRepository, PgsqlFounderRepository>();
 
 builder.Services.AddControllers(opt =>
 {

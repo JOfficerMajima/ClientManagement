@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ClientManagement.Application.Exceptions
+﻿namespace ClientManagement.Application.Exceptions
 {
     public class UserFriendlyException : Exception
     {

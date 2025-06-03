@@ -1,5 +1,4 @@
 ﻿using ClientManagement.Domain;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClientManagement.Api.Controllers
