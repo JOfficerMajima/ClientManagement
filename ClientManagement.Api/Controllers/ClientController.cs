@@ -82,6 +82,8 @@ namespace ClientManagement.Api.Controllers
         }
 
         [HttpGet("[action]")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(IEnumerable<ClientWithFoundersDto>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetClientWithFounders(int id)
         {
             var result = await _clientService.GetClientWithFoundersAsync(id);
