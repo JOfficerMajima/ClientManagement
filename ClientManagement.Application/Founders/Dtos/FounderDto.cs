@@ -7,7 +7,7 @@ namespace ClientManagement.Application.Founders.Dtos
     public class FounderDto : AuditedEntityDto
     {
         [Required]
-        public string INN { get; set; }
+        public int INN { get; set; }
 
         [Required]
         public string FullName { get; set; }

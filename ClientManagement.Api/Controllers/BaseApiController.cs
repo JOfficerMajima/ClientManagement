@@ -7,11 +7,6 @@ namespace ClientManagement.Api.Controllers
     [ApiController]
     public abstract class BaseApiController : ControllerBase
     {
-        protected ApplicationDbContext Context { get; set; }
 
-        protected BaseApiController(ApplicationDbContext context)
-        {
-            Context = context;
-        }
     }
 }

@@ -13,9 +13,7 @@ namespace ClientManagement.Api.Controllers
         private readonly IFounderService _founderService;
         private readonly IMapper _mapper;
 
-        public FounderController(ApplicationDbContext context,
-            IFounderService founderService,
-            IMapper mapper) : base(context)
+        public FounderController(IFounderService founderService, IMapper mapper) : base()
         {
             _founderService = founderService;
             _mapper = mapper;

@@ -13,10 +13,7 @@ namespace ClientManagement.Api.Controllers
         private readonly IClientService _clientService;
         private readonly IMapper _mapper;
 
-        public ClientController(
-            ApplicationDbContext context,
-            IClientService clientService,
-            IMapper mapper) : base(context)
+        public ClientController(IClientService clientService, IMapper mapper) : base()
         {
             _clientService = clientService;
             _mapper = mapper;

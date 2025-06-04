@@ -8,7 +8,7 @@ namespace ClientManagement.Application.Clients.Dtos
     public class ClientWithFoundersDto : EntityDto
     {
         [Required]
-        public string INN { get; set; }
+        public int INN { get; set; }
 
         [Required]
         public string Name { get; set; }

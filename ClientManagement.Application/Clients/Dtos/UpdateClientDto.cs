@@ -11,7 +11,7 @@ namespace ClientManagement.Application.Clients.Dtos
 {
     public class UpdateClientDto : EntityDto
     {
-        public string INN { get; set; }
+        public int INN { get; set; }
 
         [Required]
         public string Name { get; set; }
